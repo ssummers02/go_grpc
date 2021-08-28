@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "pb/hello.proto",
+    "title": "pb/rusprofile.proto",
     "version": "version not set"
   },
   "consumes": [
@@ -13,13 +13,12 @@
   "paths": {
     "/inn": {
       "post": {
-        "summary": "rpc FirmInfoGet(FirmByINNRequest) returns (FirmInfoResponse) {}",
         "operationId": "Greeter_FirmInfoGet",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiFirmInfoResponse"
+              "$ref": "#/definitions/rusprofileFirmInfoResponse"
             }
           },
           "default": {
@@ -35,7 +34,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiFirmByINNRequest"
+              "$ref": "#/definitions/rusprofileFirmByINNRequest"
             }
           }
         ],
@@ -46,31 +45,6 @@
     }
   },
   "definitions": {
-    "apiFirmByINNRequest": {
-      "type": "object",
-      "properties": {
-        "inn": {
-          "type": "string"
-        }
-      }
-    },
-    "apiFirmInfoResponse": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "kpp": {
-          "type": "string"
-        },
-        "inn": {
-          "type": "string"
-        },
-        "boss": {
-          "type": "string"
-        }
-      }
-    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -101,6 +75,31 @@
           "items": {
             "$ref": "#/definitions/protobufAny"
           }
+        }
+      }
+    },
+    "rusprofileFirmByINNRequest": {
+      "type": "object",
+      "properties": {
+        "inn": {
+          "type": "string"
+        }
+      }
+    },
+    "rusprofileFirmInfoResponse": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "kpp": {
+          "type": "string"
+        },
+        "inn": {
+          "type": "string"
+        },
+        "boss": {
+          "type": "string"
         }
       }
     }

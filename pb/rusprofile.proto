@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package rusprofile;
+
+import "google/api/annotations.proto";
+
+option go_package = "./gen;rusprofile";
+
+
+message FirmByINNRequest {
+  string inn = 1;
+}
+
+message FirmInfoResponse {
+  string name = 1;
+  string kpp = 2;
+  string inn = 3;
+  string boss = 4;
+}
+
+service Greeter {
+  rpc FirmInfoGet(FirmByINNRequest) returns (FirmInfoResponse) {
+    option (google.api.http) = {
+      post: "/inn"
+      body: "*"
+    };
+  }
+}

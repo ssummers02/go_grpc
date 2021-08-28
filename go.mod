@@ -1,4 +1,4 @@
-module v4
+module go_grpc
 
 go 1.16
 

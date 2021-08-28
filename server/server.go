@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"strings"
 	"sync"
 
-	pb "github.com/ssummers02/go_grpc"
+	pb "go_grpc/gen"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"golang.org/x/net/context"
@@ -38,10 +38,16 @@ func (g *Greeter) FirmInfoGet(ctx context.Context, request *pb.FirmByINNRequest)
 		Name: "",
 		Inn:  "",
 		Kpp:  "",
-		Boss: ""}
+		Boss: "",
+	}
 	resp, err := http.Get(URL + request.GetInn())
 	if err != nil {
 		return response, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return response, fmt.Errorf(resp.Status)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -50,16 +56,25 @@ func (g *Greeter) FirmInfoGet(ctx context.Context, request *pb.FirmByINNRequest)
 	}
 	var bodyToParse = string(body)
 
-	response.Inn = FindByPattern(".*clip_kpp.?>(.*)<", bodyToParse)
-	response.Kpp = FindByPattern(".*clip_kpp.?>(.*)<", bodyToParse)
+	Inn := FindByPattern(".*clip_kpp.?>(.*)<", bodyToParse)
+	Kpp := FindByPattern(".*clip_kpp.?>(.*)<", bodyToParse)
 
 	var result = FindByPattern("legalName.?>(.*)</", bodyToParse)
-	if result != "" {
-		response.Name = strings.Replace(result, "&quot;", "\"", -1)
-		response.Boss = FindByPattern(fmt.Sprintf("<meta name=\"keywords\" content=.*%v, (.*), ИНН ", result), bodyToParse)
-	}
+	Name := ""
+	Boss := ""
 
-	return response, nil
+	if result != "" {
+		Name = strings.Replace(result, "&quot;", "\"", -1)
+		Boss = FindByPattern(fmt.Sprintf("<meta name=\"keywords\" content=.*%v, (.*), ИНН ", result), bodyToParse)
+	}
+	resResponse := &pb.FirmInfoResponse{
+		Name: Name,
+		Inn:  Inn,
+		Kpp:  Kpp,
+		Boss: Boss,
+	}
+	log.Println(resResponse)
+	return resResponse, nil
 }
 
 // New creates new server greeter
